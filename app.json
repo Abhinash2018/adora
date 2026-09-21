@@ -12,7 +12,8 @@
       "expo-secure-store",
       "expo-font",
       "expo-status-bar",
-      "expo-web-browser"
+      "expo-web-browser",
+      ["expo-image-picker", { "photosPermission": "Select business photos for your advertisements.", "cameraPermission": "Take business photos for your advertisements.", "microphonePermission": false }]
     ],
     "experiments": {
       "typedRoutes": true

@@ -13,6 +13,8 @@
 
 ## Completion work
 
+- `feature/photo-upload` (stacked on PR #7): camera/gallery selection, durable demo images, private owner-scoped Supabase uploads, preview/retry/removal. Acceptance and device-test limitations: `docs/photo-upload.md`.
+
 - `feature/advertising-connections` (stacked on PR #6): server-authenticated Google Ads and Meta OAuth adapters, encrypted tokens, account selection, demo selection, reconnect/disconnect and setup guidance. Acceptance and limitations: `docs/advertising-connections.md`. Live provider validation awaits credentials/approvals.
 
 - `feature/channel-selection` (depends on Google sign-in / PR #5): saved channel choices, goal-based recommendation, persisted campaign draft state and owner-scoped cloud profiles/workspaces. Acceptance: no-website flow continues to channels; choices survive reload; cloud rows are protected by ownership RLS.
