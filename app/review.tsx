@@ -1,18 +1,30 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import * as Crypto from 'expo-crypto';
 import { Pressable, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/auth/AuthProvider';
 import { allocation } from '@/src/domain/budget';
-import { channelName, money, providerFor, reviewProblems } from '@/src/domain/campaign';
+import { Campaign, channelName, money, providerFor, reviewProblems, submitDemo } from '@/src/domain/campaign';
+import { api } from '@/src/services/api';
 import { PhotoView } from '@/src/PhotoView';
 import { useWorkspace } from '@/src/state/WorkspaceProvider';
 import { WorkspaceScreen } from '@/src/state/WorkspaceScreen';
 import { Button, Card, Notice, ui } from '@/src/ui';
 export default function Review() {
   const router = useRouter(); const { demo } = useAuth(); const workspace = useWorkspace(); const draft = workspace.data.draft;
-  const [approvedKey, setApprovedKey] = useState(''); const [notice, setNotice] = useState('');
+  const [approvedKey, setApprovedKey] = useState(''); const [notice, setNotice] = useState(''); const [busy, setBusy] = useState(false); const lock = useRef(false);
   const key = JSON.stringify([draft?.id, draft?.revision, workspace.data.connections]); const approved = approvedKey === key;
   const problems = draft ? reviewProblems(draft, workspace.data.connections, demo) : [];
+  async function submit() {
+    if (!draft || lock.current || !approved) return; lock.current = true; setBusy(true); setNotice('');
+    try { let campaign: Campaign;
+      if (demo) {
+        const saved = await workspace.update(w => { if (JSON.stringify([w.draft?.id, w.draft?.revision, w.connections]) !== approvedKey) throw new Error('Your draft or accounts changed. Review them again.'); return submitDemo(w, draft.revision, true, Crypto.randomUUID()); });
+        campaign = saved.campaigns.find(c => c.draftId === draft.id && c.revision === draft.revision)!;
+      } else campaign = (await api<{ campaign: Campaign }>('/campaigns/review', { draftId: draft.id, revision: draft.revision, reviewed: true })).campaign;
+      router.replace({ pathname: '/submitted', params: { id: campaign.id, mode: demo ? 'demo' : 'review' } });
+    } catch (e) { setNotice(e instanceof Error ? e.message : 'Could not save. Retrying will not duplicate this campaign.'); } finally { lock.current = false; setBusy(false); }
+  }
   return <WorkspaceScreen title="Ready when you are." step={7} back={() => router.back()}>
     {draft && <><Card><Text style={ui.label}>{draft.business.name} · {draft.business.goal}</Text><Text style={ui.body}>{draft.business.location}</Text><Text selectable style={ui.body}>Destination: {draft.destination}</Text><Text style={ui.body}>Duration: {draft.days} days after activation · No automatic renewal</Text><Text style={ui.caption}>Draft revision {draft.revision}. Platform targeting and final launch dates are not configured for live campaigns in this build.</Text></Card>
       {draft.photos[0] && <PhotoView photo={draft.photos[0]} />}<Text style={ui.caption}>The first photo is the primary creative. Remaining uploaded photos provide creation context.</Text>
@@ -25,6 +37,6 @@ export default function Review() {
     <Notice>{demo ? 'Approval simulates submission for platform review. It never launches ads or charges money.' : 'Live paid submission is disabled until provider campaign adapters, exact targeting, billing, fees and spending controls are verified. You can still save and review your campaign.'}</Notice>
     <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: approved }} onPress={() => setApprovedKey(approved ? '' : key)} style={ui.card}><Text style={ui.body}>{approved ? '☑' : '☐'} I reviewed this exact campaign, destination, accounts, duration and budget.{demo ? ' I approve a demo submission only.' : ' No paid submission is authorized while live launch is unavailable.'}</Text></Pressable>
     {notice && <Notice>{notice}</Notice>}
-    <Button title={demo ? 'Approve demo campaign' : 'Save review'} disabled={!approved || problems.length > 0} onPress={() => setNotice('Approval is recorded on this screen only. Submission persistence is the next dependent feature.')} />
+    <Button title={demo ? `Approve ${money(draft?.budgetCents ?? 0)} demo & submit` : 'Save review (no paid submission)'} disabled={!approved || problems.length > 0} busy={busy} onPress={() => void submit()} />
   </WorkspaceScreen>;
 }
