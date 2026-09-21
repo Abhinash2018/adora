@@ -1,4 +1,5 @@
 import { BusinessProfile } from './businessProfile';
+import { allocation, destinationProblem } from './budget';
 
 export type Channel = 'google' | 'facebook' | 'instagram';
 export type Provider = 'google' | 'meta';
@@ -10,7 +11,7 @@ export type Draft = {
   id: string; revision: number; business: BusinessProfile; channels: Channel[]; photos: Photo[]; copy: AdCopy[];
   budgetCents: number; days: number; destination: string; copyConfirmed: boolean;
 };
-export type Campaign = { id: string; draftId: string; revision: number; status: CampaignStatus; demo: boolean; createdAt: string; snapshot: Draft; spendCents: number | null; clicks: number | null; conversions: number | null; message?: string };
+export type Campaign = { id: string; draftId: string; revision: number; status: CampaignStatus; demo: boolean; createdAt: string; snapshot: Draft; selectedConnections?: Connection[]; spendCents: number | null; clicks: number | null; conversions: number | null; message?: string };
 export type Workspace = { draft: Draft | null; connections: Connection[]; campaigns: Campaign[] };
 export const emptyWorkspace: Workspace = { draft: null, connections: [], campaigns: [] };
 export function newDraft(id: string, business: BusinessProfile): Draft {
@@ -46,15 +47,18 @@ export function transition(current: CampaignStatus, next: CampaignStatus): Campa
 export function reviewProblems(draft: Draft, connections: Connection[], demo: boolean): string[] {
   const problems: string[] = [];
   const budget = validateBudget(draft.budgetCents, draft.days); if (budget) problems.push(budget);
+  if (allocation(draft).some(a => a.cents < 100)) problems.push('Plan at least $1 per advertising provider. Platform minimums may be higher.');
   if (!draft.channels.length) problems.push('Choose at least one platform.');
   if (!draft.photos.length) problems.push('Add at least one photo.');
   if (!draft.copyConfirmed || draft.channels.some(c => !draft.copy.some(ad => ad.channel === c && ad.headline.trim() && ad.body.trim()))) problems.push('Review and confirm the ad copy for every platform.');
+  if (draft.copy.some(ad => ad.headline.length > (ad.channel === 'google' ? 30 : 80) || ad.body.length > (ad.channel === 'google' ? 90 : 500))) problems.push('Ad copy exceeds the preview limits.');
   for (const provider of new Set(draft.channels.map(providerFor))) {
     const connection = connections.find(c => c.provider === provider);
     if (!connection || connection.status !== 'connected' || !connection.accountId || connection.demo !== demo) problems.push(`Select a ${provider === 'meta' ? 'Meta' : 'Google Ads'} advertising account.`);
     if (provider === 'meta' && !connection?.assetId) problems.push('Select a Meta business asset.');
   }
-  if (!draft.destination.trim()) problems.push('Add a destination for this ad. You can plan without a website, but submission needs a phone number, messaging destination, or website.');
+  if (draft.channels.includes('instagram') && !connections.find(c => c.provider === 'meta')?.instagramId) problems.push('Select a business page linked to a professional Instagram account.');
+  const destination = destinationProblem(draft.destination, draft.business.goal); if (destination) problems.push(destination);
   return problems;
 }
 export function submitDemo(workspace: Workspace, approvedRevision: number, approved: boolean, id: string): Workspace {
@@ -63,5 +67,5 @@ export function submitDemo(workspace: Workspace, approvedRevision: number, appro
   const previous = workspace.campaigns.find(c => c.draftId === draft.id && c.revision === approvedRevision);
   if (previous) return workspace;
   const problems = reviewProblems(draft, workspace.connections, true); if (problems.length) throw new Error(problems[0]);
-  return { ...workspace, campaigns: [{ id, draftId: draft.id, revision: approvedRevision, status: 'submitted', demo: true, createdAt: new Date().toISOString(), snapshot: JSON.parse(JSON.stringify(draft)), spendCents: 0, clicks: null, conversions: null }, ...workspace.campaigns] };
+  return { ...workspace, campaigns: [{ id, draftId: draft.id, revision: approvedRevision, status: 'submitted', demo: true, createdAt: new Date().toISOString(), snapshot: JSON.parse(JSON.stringify(draft)), selectedConnections: JSON.parse(JSON.stringify(workspace.connections.filter(c => draft.channels.some(ch => providerFor(ch) === c.provider)))), spendCents: 0, clicks: null, conversions: null }, ...workspace.campaigns] };
 }

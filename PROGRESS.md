@@ -13,6 +13,8 @@
 
 ## Completion work
 
+- `feature/budget-and-approval` (stacked on PR #9): cent-safe allocations, phone/messaging destinations without a website, exact draft review and revision-bound consent. Acceptance: `docs/budget-and-approval.md`.
+
 - `feature/ai-ad-creation` (stacked on PR #8): platform previews, fact-only structured server AI, manual copy editing, consent, plain-language revision and confirmation. Demo is local and clearly labeled. Acceptance: `docs/ai-ad-creation.md`.
 
 - `feature/photo-upload` (stacked on PR #7): camera/gallery selection, durable demo images, private owner-scoped Supabase uploads, preview/retry/removal. Acceptance and device-test limitations: `docs/photo-upload.md`.
