@@ -13,6 +13,8 @@
 
 ## Completion work
 
+- `feature/channel-selection` (depends on Google sign-in / PR #5): saved channel choices, goal-based recommendation, persisted campaign draft state and owner-scoped cloud profiles/workspaces. Acceptance: no-website flow continues to channels; choices survive reload; cloud rows are protected by ownership RLS.
+
 - `feature/runtime-baseline` (depends on `feature/no-website-onboarding`): record the existing SDK 57/configuration repairs and pin animation peers to Expo's compatibility matrix. Acceptance: clean install, typecheck, lint and existing tests.
 - Next: Google sign-in with secure session handling; persistent campaign workflow; camera/gallery and previews; review/submission and results; protected backend and provider adapters. Live Google OAuth needs a configured Supabase project/Google provider; advertising needs separate provider approvals and credentials.
 - `feature/google-sign-in` stacked on `feature/runtime-baseline` (PR #4): Google OAuth via Supabase PKCE, secure native sessions, cancellation/retry/sign-out, route guard and explicit demo entry. Setup/acceptance: `docs/google-sign-in.md`. Live end-to-end login awaits Supabase/Google configuration.

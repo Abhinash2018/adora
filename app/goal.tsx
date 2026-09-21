@@ -36,6 +36,7 @@ export default function Goal() {
     try {
       await saveBusinessProfile({ ...profile, goal });
       setSaved(true);
+      router.push('/channels');
     } catch {
       setError('Your goal could not be saved. Please try again.');
     } finally {
@@ -55,7 +56,7 @@ export default function Goal() {
         </Pressable>)}
       </View>
       {profile.noWebsite && <Text style={s.notice}>{goal === 'bookings' ? 'No website yet? You can plan your ad now. A supported booking or sales destination must be added before submission.' : 'You can plan this goal without a website. A phone number or supported messaging account will be needed before submission.'}</Text>}
-      <Pressable accessibilityRole="button" accessibilityState={{ disabled: saving, busy: saving }} disabled={saving} onPress={save} style={s.button}><Text style={s.buttonText}>{saving ? 'Saving…' : 'Save my goal'}</Text></Pressable>
+      <Pressable accessibilityRole="button" accessibilityState={{ disabled: saving, busy: saving }} disabled={saving} onPress={save} style={s.button}><Text style={s.buttonText}>{saving ? 'Saving…' : 'Find my customers'}</Text></Pressable>
       {saved && <Text accessibilityLiveRegion="polite" style={s.notice}>Your goal is saved. Account connection and campaign setup are coming next. No ad has been submitted.</Text>}
     </> : null}
     {!!error && <Text accessibilityRole="alert" style={s.error}>{error}</Text>}

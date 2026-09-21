@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import { loadBusinessProfile, saveBusinessProfile } from './businessProfileStore';
 
 jest.mock('expo-secure-store', () => ({ getItemAsync: jest.fn(), setItemAsync: jest.fn() }));
+jest.mock('./profileCloud', () => ({ profileOwner: async () => null }));
 
 const draft = { name: 'Motel', location: 'Austin', description: 'Rooms', noWebsite: true, destination: 'stale.example', goal: 'calls' as const };
 
