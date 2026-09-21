@@ -3,7 +3,8 @@ import * as Crypto from 'expo-crypto';
 
 // Auth sessions can exceed the size supported by a single SecureStore value.
 // Write chunks under a fresh generation; switch the manifest only after all succeed.
-const chunkSize = 1500;
+// 400 Unicode code points stay below 2 KB without splitting surrogate pairs.
+const chunkSize = 400;
 type Manifest = { generation: string; count: number };
 async function manifest(key: string): Promise<Manifest | null> {
   const raw = await SecureStore.getItemAsync(key);
@@ -24,9 +25,13 @@ export const sessionStorage = {
   },
   async setItem(key: string, value: string) {
     const old = await manifest(key);
-    const next = { generation: Crypto.randomUUID(), count: Math.max(1, Math.ceil(value.length / chunkSize)) };
+    const points = Array.from(value); const chunks: string[] = [];
+    for (let i = 0; i < points.length; i += chunkSize) chunks.push(points.slice(i, i + chunkSize).join(''));
+    if (!chunks.length) chunks.push('');
+    if (chunks.length > 100) throw new Error('Session is too large for secure storage.');
+    const next = { generation: Crypto.randomUUID(), count: chunks.length };
     try {
-      for (let i = 0; i < next.count; i++) await SecureStore.setItemAsync(`${key}.${next.generation}.${i}`, value.slice(i * chunkSize, (i + 1) * chunkSize));
+      for (let i = 0; i < next.count; i++) await SecureStore.setItemAsync(`${key}.${next.generation}.${i}`, chunks[i]);
       await SecureStore.setItemAsync(key, JSON.stringify(next));
     } catch (error) { await removeChunks(key, next).catch(() => {}); throw error; }
     await removeChunks(key, old).catch(() => {});

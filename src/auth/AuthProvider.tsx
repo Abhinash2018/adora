@@ -13,19 +13,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState('');
   useEffect(() => {
     let mounted = true;
-    Promise.all([AsyncStorage.getItem('adora.demo'), supabase?.auth.getSession()]).then(([flag, result]) => {
+    let timeout: ReturnType<typeof setTimeout>;
+    const deadline = new Promise<never>((_resolve, reject) => { timeout = setTimeout(() => reject(new Error('Session restore timed out')), 15000); });
+    Promise.race([Promise.all([AsyncStorage.getItem('adora.demo'), supabase?.auth.getSession()]), deadline]).then(([flag, result]) => {
       if (!mounted) return;
       if (result?.error) throw result.error;
       setSession(result?.data.session ?? null); setDemo(flag === 'true' && !result?.data.session);
-    }).catch(() => { if (mounted) setError('Your session could not be restored. Please sign in again.'); }).finally(() => { if (mounted) setLoading(false); });
+    }).catch(() => { if (mounted) setError('Your session could not be restored. Check your connection and sign in again, or explore the demo.'); }).finally(() => { clearTimeout(timeout); if (mounted) setLoading(false); });
     const listener = supabase?.auth.onAuthStateChange((_event, next) => {
       setSession(next);
-      if (next) { setDemo(false); void AsyncStorage.removeItem('adora.demo'); }
+      if (next) { setDemo(false); void AsyncStorage.removeItem('adora.demo').catch(() => {}); }
     });
     const app = AppState.addEventListener('change', (state) => {
       if (Platform.OS !== 'web') { if (state === 'active') supabase?.auth.startAutoRefresh(); else supabase?.auth.stopAutoRefresh(); }
     });
-    return () => { mounted = false; listener?.data.subscription.unsubscribe(); app.remove(); };
+    return () => { mounted = false; clearTimeout(timeout); listener?.data.subscription.unsubscribe(); app.remove(); };
   }, []);
   const startDemo = async () => { await AsyncStorage.setItem('adora.demo', 'true'); setDemo(true); setError(''); };
   const signOut = async () => {

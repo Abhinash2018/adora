@@ -1,38 +1,41 @@
-# Progress
+# Adora progress
 
-| Status | Feature | Branch | Dependency | Notes |
-| --- | --- | --- | --- | --- |
-| Merged (PR #1) | Mobile foundation | `feature/mobile-foundation` | `main` | Expo TypeScript shell, native navigation foundation, design tokens, CI and dev-build setup. |
-| In progress | Auth and business profile | `feature/auth-business-profile` | `feature/mobile-foundation` | Local encrypted profile draft and validation; server authentication remains pending backend design. |
-| Implemented; awaiting review | Optional website onboarding | `feature/no-website-onboarding` | `feature/auth-business-profile` (PR #2) | Explicit no-website choice, persisted preference, navigation to goal selection, saved goal, browser storage adapter. Scope/acceptance: `docs/no-website-onboarding.md`. |
-| Planned | Channel selection | `feature/channel-selection` | business profile | Google/Meta connection states remain distinct. |
-| Planned | Provider connections | separate Google/Meta branches | channel selection | Requires approved OAuth and advertising API credentials. |
-| Planned | Assets, AI, budget, review, submission, results | feature branches | prior features | No paid campaign actions in development. |
+The complete **demo** flow is implemented. Real Google sign-in and server integration code require external configuration. **Live paid campaign submission/reporting/control adapters remain unfinished and hard-disabled.** No ads were launched or cards charged.
 
-## Blockers
+## Delivery
 
-## Completion work
+All branches below are stacked on the previous row unless noted. They are pushed and awaiting review, not automatically merged into main. Feature scope/acceptance and setup are in the linked docs.
 
-- `feature/results-dashboard` (stacked on PR #11): full saved demo lifecycle, explicit review simulation, pause/resume/stop, history, missing metrics, new drafts and account navigation. Acceptance: `docs/results-dashboard.md`. Live reporting/controls remain unavailable pending provider adapters.
+| Feature branch | Commit | PR | Scope / how to try |
+| --- | --- | --- | --- |
+| feature/runtime-baseline | 7922e19 | [#4](https://github.com/Abhinash2018/adora/pull/4) | Depends on no-website-onboarding / #3; records SDK 57/runtime repairs. |
+| feature/google-sign-in | dcffc2c | [#5](https://github.com/Abhinash2018/adora/pull/5) | [Google sign-in setup](docs/google-sign-in.md); separate demo entry. |
+| feature/channel-selection | 6b76fa0 + a551b17 | [#6](https://github.com/Abhinash2018/adora/pull/6) | Choose a goal and platform; persisted owner-scoped drafts. |
+| feature/advertising-connections | 96f171d | [#7](https://github.com/Abhinash2018/adora/pull/7) | [Accounts](docs/advertising-connections.md); separate Ads consent and sample selection. |
+| feature/photo-upload | fa0efcf | [#8](https://github.com/Abhinash2018/adora/pull/8) | [Photos](docs/photo-upload.md); camera/gallery, private storage and previews. |
+| feature/ai-ad-creation | dfafe3f | [#9](https://github.com/Abhinash2018/adora/pull/9) | [Ad creation](docs/ai-ad-creation.md); fact-only AI, editable previews, local demo. |
+| feature/budget-and-approval | 22c8563 | [#10](https://github.com/Abhinash2018/adora/pull/10) | [Budget/review](docs/budget-and-approval.md); no-website phone/message destinations. |
+| feature/campaign-submission | 8433ea0 | [#11](https://github.com/Abhinash2018/adora/pull/11) | [Records](docs/campaign-submission.md); idempotent demo submission, server-owned reviews. |
+| feature/results-dashboard | d3ade38 | [#12](https://github.com/Abhinash2018/adora/pull/12) | [Dashboard](docs/results-dashboard.md); saved history and demo pause/resume/stop. |
+| feature/flow-verification | Current branch | PR pending final checks | [Verification](docs/verification.md); connected-screen tests, storage/security fixes and complete setup instructions. |
 
-- `feature/campaign-submission` (stacked on PR #10): durable demo submission, explicit revision/account approval, duplicate prevention, owner-protected immutable live review records. Live paid adapters intentionally fail closed and still require implementation/verification; see `docs/campaign-submission.md`.
+Earlier history: mobile-foundation PR #1 was already merged; auth-business-profile PR #2 and no-website-onboarding PR #3 are prior dependencies. No PR was merged during this completion work. The latest stacked branch contains the full application; main remains unchanged.
 
-- `feature/budget-and-approval` (stacked on PR #9): cent-safe allocations, phone/messaging destinations without a website, exact draft review and revision-bound consent. Acceptance: `docs/budget-and-approval.md`.
+## Verification
 
-- `feature/ai-ad-creation` (stacked on PR #8): platform previews, fact-only structured server AI, manual copy editing, consent, plain-language revision and confirmation. Demo is local and clearly labeled. Acceptance: `docs/ai-ad-creation.md`.
+- 42 mobile/domain/component tests and 8 server tests passed locally; lint and mobile/server typecheck passed.
+- Android, iOS and web JavaScript bundles exported successfully. No native compilation or device/emulator testing occurred; no interactive browser visual verification was available.
+- GitHub CI succeeded for campaign-submission (#11, run 35570543831) and results-dashboard (#12, run 35570869695). Final verification CI is checked after pushing.
+- Entire no-website demo screen flow is exercised, including camera/gallery boundary mocks, approval and pause/stop. This does not prove device hardware, OAuth or paid provider behavior.
+- npm reports 13 moderate transitive dependency advisories; SDK-compatible remediation still needs review.
 
-- `feature/photo-upload` (stacked on PR #7): camera/gallery selection, durable demo images, private owner-scoped Supabase uploads, preview/retry/removal. Acceptance and device-test limitations: `docs/photo-upload.md`.
+## Remaining blockers / unfinished production work
 
-- `feature/advertising-connections` (stacked on PR #6): server-authenticated Google Ads and Meta OAuth adapters, encrypted tokens, account selection, demo selection, reconnect/disconnect and setup guidance. Acceptance and limitations: `docs/advertising-connections.md`. Live provider validation awaits credentials/approvals.
+- No local .env or .env.server: Supabase project/public settings, deployed migrations, Google OAuth provider/callbacks and a development build are needed to use real sign-in. Configure secrets only in supported dashboards/server storage.
+- Google Ads developer access/client credentials and Meta app review/permissions/eligibility, supported API versions and secure billing setup are not available. Meta official docs returned an access/rate-limit error; reverify in provider documentation before live use.
+- AI requires a server-only key/model and user consent; no paid generation was tested. OpenAI Docs informed the Responses API implementation.
+- Paid submission adapters, exact targeting/date/fee/billing validation, provider-enforced spending controls, reconciliation, real metrics and pause/stop still require implementation plus sandbox/device testing. Credentials alone do not enable them.
+- Production privacy/account deletion, storage retention, store-policy review (including Apple sign-in where required), distributed rate limits and operational secret management remain.
+- No live Figma URL was supplied; provided exports were the design reference.
 
-- `feature/channel-selection` (depends on Google sign-in / PR #5): saved channel choices, goal-based recommendation, persisted campaign draft state and owner-scoped cloud profiles/workspaces. Acceptance: no-website flow continues to channels; choices survive reload; cloud rows are protected by ownership RLS.
-
-- `feature/runtime-baseline` (depends on `feature/no-website-onboarding`): record the existing SDK 57/configuration repairs and pin animation peers to Expo's compatibility matrix. Acceptance: clean install, typecheck, lint and existing tests.
-- Next: Google sign-in with secure session handling; persistent campaign workflow; camera/gallery and previews; review/submission and results; protected backend and provider adapters. Live Google OAuth needs a configured Supabase project/Google provider; advertising needs separate provider approvals and credentials.
-- `feature/google-sign-in` stacked on `feature/runtime-baseline` (PR #4): Google OAuth via Supabase PKCE, secure native sessions, cancellation/retry/sign-out, route guard and explicit demo entry. Setup/acceptance: `docs/google-sign-in.md`. Live end-to-end login awaits Supabase/Google configuration.
-
-- Optional website onboarding: 16 tests pass (validation, native storage mocks, form interaction including retry and duplicate taps); typecheck/lint pass; web export passes. No Android/iOS device or interactive browser verification was available. Tests/build ran against the workspace's existing uncommitted SDK 57 dependency updates; these unrelated dependency/config changes are not included in this feature commit.
-- Goal selection saves a draft only. Later account/campaign screens remain unimplemented; missing website does not authorize submitting a campaign without a supported destination.
-
-- No live Figma URL was provided; exported SVG/PNG/HTML/JSON are the active design reference.
-- Google Ads and Meta credentials, app approvals, billing setup, and OAuth redirect configuration are not available. No real provider integration or paid submission can be enabled yet.
+Run instructions: [README](README.md). The complete demo requires no backend credentials and is clearly labeled at every campaign step.

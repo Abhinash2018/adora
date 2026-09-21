@@ -11,12 +11,16 @@ export type FieldErrors = Partial<Record<keyof BusinessProfile, string>>;
 export function validateBusinessProfile(profile: BusinessProfile): FieldErrors {
   const errors: FieldErrors = {};
   if (!profile.name.trim()) errors.name = 'Enter your business name.';
+  else if (profile.name.length > 100) errors.name = 'Keep your business name under 100 characters.';
   if (!profile.location.trim()) errors.location = 'Enter your city or service area.';
+  else if (profile.location.length > 200) errors.location = 'Keep your location under 200 characters.';
   if (!profile.noWebsite) {
     if (!profile.destination.trim()) errors.destination = 'Add a website or booking link.';
     else if (!isWebsite(profile.destination.trim())) errors.destination = 'Enter a valid website or booking link.';
   }
   if (!profile.description.trim()) errors.description = 'Tell us a little about your business.';
+  else if (profile.description.length > 3000) errors.description = 'Keep your description under 3,000 characters.';
+  if (!profile.noWebsite && profile.destination.length > 2048) errors.destination = 'Use a shorter destination link.';
   return errors;
 }
 

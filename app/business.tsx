@@ -84,7 +84,7 @@ export default function Business() {
             : <Field label="Website or booking link" value={profile.destination} onChangeText={(v) => update('destination', v)} error={errors.destination} placeholder="thepalms.example" url editable={!saving} />}
           <Field label="What should people know?" value={profile.description} onChangeText={(v) => update('description', v)} error={errors.description} placeholder="A friendly stay near downtown." editable={!saving} />
         </View>
-        <Text style={s.note}>Your progress is saved on this {Platform.OS === 'web' ? 'browser' : 'device'}. We&apos;ll never publish an ad without your review.</Text>
+        <Text style={s.note}>Signed-in progress is saved to your account. Demo progress stays on this {Platform.OS === 'web' ? 'browser' : 'device'}. We&apos;ll never publish an ad without your review.</Text>
         {storeError ? <Text accessibilityRole="alert" style={s.error}>{storeError}</Text> : null}
         <Pressable disabled={saving} accessibilityRole="button" accessibilityState={{ disabled: saving, busy: saving }} style={({ pressed }) => [s.button, (pressed || saving) && { opacity: .8 }]} onPress={save}>
           <Text style={s.buttonText}>{saving ? 'Saving…' : 'Save and continue'}</Text><Ionicons name="arrow-forward" size={20} color={C.white} />
