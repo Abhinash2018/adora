@@ -5,7 +5,7 @@ export async function api<T>(path: string, body?: unknown, method?: string): Pro
   if (!base || !supabase) throw new Error('The Adora backend is not configured yet.');
   const { data, error } = await supabase.auth.getSession();
   if (error || !data.session) throw new Error('Please sign in again.');
-  const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 20000);
+  const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), path.startsWith('/ai/') ? 65000 : 20000);
   try {
     const response = await fetch(`${base.replace(/\/$/, '')}${path}`, { method: method ?? (body ? 'POST' : 'GET'), headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session.access_token}` }, body: body ? JSON.stringify(body) : undefined, signal: controller.signal });
     const result = await response.json();
