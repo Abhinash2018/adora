@@ -11,6 +11,11 @@
 
 ## Blockers
 
+## Completion work
+
+- `feature/runtime-baseline` (depends on `feature/no-website-onboarding`): record the existing SDK 57/configuration repairs and pin animation peers to Expo's compatibility matrix. Acceptance: clean install, typecheck, lint and existing tests.
+- Next: Google sign-in with secure session handling; persistent campaign workflow; camera/gallery and previews; review/submission and results; protected backend and provider adapters. Live Google OAuth needs a configured Supabase project/Google provider; advertising needs separate provider approvals and credentials.
+
 - Optional website onboarding: 16 tests pass (validation, native storage mocks, form interaction including retry and duplicate taps); typecheck/lint pass; web export passes. No Android/iOS device or interactive browser verification was available. Tests/build ran against the workspace's existing uncommitted SDK 57 dependency updates; these unrelated dependency/config changes are not included in this feature commit.
 - Goal selection saves a draft only. Later account/campaign screens remain unimplemented; missing website does not authorize submitting a campaign without a supported destination.
 
