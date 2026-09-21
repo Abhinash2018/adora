@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Adora",
+    "slug": "adora",
+    "scheme": "adora",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "plugins": ["expo-router", "expo-dev-client"],
+    "experiments": { "typedRoutes": true },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.adora.app" },
+    "android": { "package": "com.adora.app" }
+  }
+}
