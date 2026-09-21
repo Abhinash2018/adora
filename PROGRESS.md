@@ -2,8 +2,8 @@
 
 | Status | Feature | Branch | Dependency | Notes |
 | --- | --- | --- | --- | --- |
-| In progress | Mobile foundation | `feature/mobile-foundation` | `main` | Expo TypeScript shell, native navigation foundation, design tokens, CI and dev-build setup. |
-| Planned | Auth and business profile | `feature/auth-business-profile` | `main` | Requires persistence/backend design. |
+| Complete (PR #1 open) | Mobile foundation | `feature/mobile-foundation` | `main` | Expo TypeScript shell, native navigation foundation, design tokens, CI and dev-build setup. |
+| In progress | Auth and business profile | `feature/auth-business-profile` | `feature/mobile-foundation` | Local encrypted profile draft and validation; server authentication remains pending backend design. |
 | Planned | Channel selection | `feature/channel-selection` | business profile | Google/Meta connection states remain distinct. |
 | Planned | Provider connections | separate Google/Meta branches | channel selection | Requires approved OAuth and advertising API credentials. |
 | Planned | Assets, AI, budget, review, submission, results | feature branches | prior features | No paid campaign actions in development. |
