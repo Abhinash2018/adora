@@ -29,6 +29,8 @@ function WorkspaceSession({ children, owner }: { children: ReactNode; owner: str
     } catch { if (activeOwner.current === owner) { current.current = emptyWorkspace; setData(emptyWorkspace); setError('Could not load your saved workspace. Check your connection and try again.'); } }
     finally { if (activeOwner.current === owner) setLoading(false); }
   }, [owner]);
+  // Loading is an external storage synchronization; the initial loading flag prevents stale content.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { activeOwner.current = owner; void load(); return () => { activeOwner.current = null; }; }, [load, owner]);
   const update = useCallback((change: (previous: Workspace) => Workspace): Promise<Workspace> => {
     const operation = queue.current.catch(() => {}).then(async () => {
