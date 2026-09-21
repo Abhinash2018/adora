@@ -36,7 +36,7 @@ export function parseDollars(value: string): number {
 }
 export const money = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 const transitions: Record<CampaignStatus, CampaignStatus[]> = {
-  draft: ['awaiting_approval'], awaiting_approval: ['draft', 'submitted'], submitted: ['under_review', 'failed'],
+  draft: ['awaiting_approval'], awaiting_approval: ['draft', 'submitted'], submitted: ['under_review', 'completed', 'failed'],
   under_review: ['active', 'rejected', 'paused', 'completed', 'failed'], active: ['paused', 'completed', 'failed'],
   paused: ['active', 'completed', 'failed'], rejected: [], completed: [], failed: [],
 };
