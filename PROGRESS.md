@@ -13,6 +13,8 @@
 
 ## Completion work
 
+- `feature/results-dashboard` (stacked on PR #11): full saved demo lifecycle, explicit review simulation, pause/resume/stop, history, missing metrics, new drafts and account navigation. Acceptance: `docs/results-dashboard.md`. Live reporting/controls remain unavailable pending provider adapters.
+
 - `feature/campaign-submission` (stacked on PR #10): durable demo submission, explicit revision/account approval, duplicate prevention, owner-protected immutable live review records. Live paid adapters intentionally fail closed and still require implementation/verification; see `docs/campaign-submission.md`.
 
 - `feature/budget-and-approval` (stacked on PR #9): cent-safe allocations, phone/messaging destinations without a website, exact draft review and revision-bound consent. Acceptance: `docs/budget-and-approval.md`.

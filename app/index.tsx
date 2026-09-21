@@ -15,7 +15,7 @@ export default function Welcome() {
       <Text style={ui.caption}>YOUR NEXT AD</Text><Text style={ui.title}>A picture.\nA few words.</Text><Text style={ui.body}>Create your first promotion, one simple step at a time.</Text>
     </View>
     <Text style={ui.body}>From “I need customers” to your first ad.</Text>
-    {auth.session || auth.demo ? <Button title="Continue my promotion" onPress={() => router.push('/business')} /> : <Button title="Let's grow your business" onPress={() => router.push('/sign-in')} />}
+    {auth.session || auth.demo ? <Button title="Open my dashboard" onPress={() => router.push('/dashboard')} /> : <Button title="Let's grow your business" onPress={() => router.push('/sign-in')} />}
     {!auth.session && <><Button title="Sign in with Google" onPress={() => router.push('/sign-in')} secondary /><Button title="Explore demo — no account needed" onPress={demo} busy={busy} secondary /></>}
     {auth.session && <Button title="My account" onPress={() => router.push('/account')} secondary />}
     {!!(error || auth.error) && <Notice error>{error || auth.error}</Notice>}
