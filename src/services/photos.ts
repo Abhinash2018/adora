@@ -6,6 +6,7 @@ import { validatePhoto } from '@/src/domain/photos';
 import { keepPhoto, photoBytes } from './photoFiles';
 export async function savePhoto(asset: ImagePickerAsset, demo: boolean): Promise<Photo> {
   const id = Crypto.randomUUID(); const mimeType = asset.mimeType ?? 'image/jpeg';
+  if (asset.fileSize !== undefined) { const problem = validatePhoto(mimeType, asset.fileSize); if (problem) throw new Error(problem); }
   const bytes = await photoBytes(asset.uri); const problem = validatePhoto(mimeType, bytes.byteLength); if (problem) throw new Error(problem);
   if (demo) return { id, mimeType, uri: await keepPhoto(id, asset.uri) };
   if (!supabase) throw new Error('Cloud storage is not configured.');

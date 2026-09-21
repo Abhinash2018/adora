@@ -1,6 +1,6 @@
-import { Draft, Provider, providerFor } from './campaign';
+import type { Draft, Provider } from './campaign';
 export function allocation(draft: Pick<Draft, 'channels' | 'budgetCents'>): { provider: Provider; cents: number }[] {
-  const providers = [...new Set(draft.channels.map(providerFor))]; const base = Math.floor(draft.budgetCents / providers.length);
+  const providers = [...new Set(draft.channels.map(channel => channel === 'google' ? 'google' as const : 'meta' as const))]; const base = Math.floor(draft.budgetCents / providers.length);
   return providers.map((provider, i) => ({ provider, cents: base + (i < draft.budgetCents % providers.length ? 1 : 0) }));
 }
 export function normalizeDestination(value: string, goal: Draft['business']['goal']): string {

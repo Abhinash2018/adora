@@ -21,3 +21,8 @@ it('rejects a failed write without publishing a partial session', async () => {
   await expect(sessionStorage.setItem('session', 'value')).rejects.toThrow();
   expect(await sessionStorage.getItem('session')).toBeNull();
 });
+it('keeps Unicode session metadata in small encrypted items', async () => {
+  const value = 'A' + '🏨房间'.repeat(1000); await sessionStorage.setItem('session', value);
+  expect(await sessionStorage.getItem('session')).toBe(value);
+  for (const [, chunk] of mockValues) expect(new TextEncoder().encode(chunk).byteLength).toBeLessThan(2048);
+});

@@ -3,6 +3,8 @@ import { supabase } from '@/src/auth/client';
 export async function api<T>(path: string, body?: unknown, method?: string): Promise<T> {
   const base = process.env.EXPO_PUBLIC_API_URL;
   if (!base || !supabase) throw new Error('The Adora backend is not configured yet.');
+  const endpoint = new URL(base);
+  if (endpoint.protocol !== 'https:' && !['localhost', '127.0.0.1', '[::1]'].includes(endpoint.hostname)) throw new Error('Use an HTTPS backend URL to protect your session. Plain HTTP is allowed only for local development.');
   const { data, error } = await supabase.auth.getSession();
   if (error || !data.session) throw new Error('Please sign in again.');
   const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), path.startsWith('/ai/') ? 65000 : 20000);

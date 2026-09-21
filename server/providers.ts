@@ -7,10 +7,13 @@ export type AdAccount = { id: string; name: string; currency: string; assets: Bu
 export class ProviderError extends PublicError { constructor(public connectionStatus: 'expired' | 'missing_permission') { super(connectionStatus === 'expired' ? 'Advertising authorization expired. Reconnect your account.' : 'Required advertising permission is missing. Reconnect and grant access.', 409); } }
 async function json<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, { ...options, signal: AbortSignal.timeout(15000) });
+  const result = await response.json() as T & { error?: string | { code?: number } };
+  if (result.error === 'invalid_grant' || (typeof result.error === 'object' && result.error?.code === 190)) throw new ProviderError('expired');
+  if (typeof result.error === 'object' && [10, 200].includes(result.error?.code ?? 0)) throw new ProviderError('missing_permission');
   if (response.status === 401) throw new ProviderError('expired');
   if (response.status === 403) throw new ProviderError('missing_permission');
   if (!response.ok) throw new PublicError('The advertising provider rejected this request. Check permissions, eligibility, and billing in the provider dashboard.', 502);
-  return response.json() as Promise<T>;
+  return result;
 }
 function callback(provider: Provider) { return `${config('API_PUBLIC_URL').replace(/\/$/, '')}/oauth/${provider}/callback`; }
 function graph() { const version = config('META_GRAPH_VERSION'); if (!/^v\d+\.\d+$/.test(version)) throw new PublicError('Meta API version is not configured.', 503); return `https://graph.facebook.com/${version}`; }

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import * as Crypto from 'expo-crypto';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, Text } from 'react-native';
 import { Channel, channelName, editDraft, newDraft, recommendChannels } from '@/src/domain/campaign';
 import { loadBusinessProfile } from '@/src/services/businessProfileStore';
@@ -12,9 +12,11 @@ export default function Channels() {
   const router = useRouter(); const workspace = useWorkspace();
   const [selected, setSelected] = useState<Channel[] | null>(null);
   const [error, setError] = useState(''); const [busy, setBusy] = useState(false);
+  const lock = useRef(false);
   const channels = selected ?? workspace.data.draft?.channels ?? [];
   const choose = async () => { try { const business = await loadBusinessProfile(); if (!business) throw new Error('Save your business details first.'); setSelected(recommendChannels(business)); } catch (e) { setError(e instanceof Error ? e.message : 'Please try again.'); } };
   const next = async () => {
+    if (lock.current) return; lock.current = true;
     setBusy(true); setError('');
     try {
       if (!channels.length) throw new Error('Choose a platform or ask for a recommendation.');
@@ -25,7 +27,7 @@ export default function Channels() {
         return { ...old, draft: changed ? editDraft(draft, { business, channels, copy: [], destination: business.noWebsite ? draft.destination : business.destination }) : draft };
       });
       router.push('/connections');
-    } catch (e) { setError(e instanceof Error ? e.message : 'Could not save your choice.'); } finally { setBusy(false); }
+    } catch (e) { setError(e instanceof Error ? e.message : 'Could not save your choice.'); } finally { lock.current = false; setBusy(false); }
   };
   return <WorkspaceScreen title="Where should your ad appear?" step={3} back={() => router.replace('/goal')} requireDraft={false}>
     <Button title="Recommend a platform" secondary onPress={choose} />
