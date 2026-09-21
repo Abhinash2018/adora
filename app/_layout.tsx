@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { AuthProvider, useAuth } from '@/src/auth/AuthProvider';
 import { colors } from '@/src/ui';
+import { WorkspaceProvider } from '@/src/state/WorkspaceProvider';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -19,5 +20,5 @@ function Navigation() {
 }
 
 export default function RootLayout() {
-  return <AuthProvider><Navigation /></AuthProvider>;
+  return <AuthProvider><WorkspaceProvider><Navigation /></WorkspaceProvider></AuthProvider>;
 }
