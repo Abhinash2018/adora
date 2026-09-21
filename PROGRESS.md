@@ -17,7 +17,7 @@ All branches below are stacked on the previous row unless noted. They are pushed
 | feature/budget-and-approval | 22c8563 | [#10](https://github.com/Abhinash2018/adora/pull/10) | [Budget/review](docs/budget-and-approval.md); no-website phone/message destinations. |
 | feature/campaign-submission | 8433ea0 | [#11](https://github.com/Abhinash2018/adora/pull/11) | [Records](docs/campaign-submission.md); idempotent demo submission, server-owned reviews. |
 | feature/results-dashboard | d3ade38 | [#12](https://github.com/Abhinash2018/adora/pull/12) | [Dashboard](docs/results-dashboard.md); saved history and demo pause/resume/stop. |
-| feature/flow-verification | 7748393 + documentation follow-up | [#13](https://github.com/Abhinash2018/adora/pull/13) | [Verification](docs/verification.md); connected-screen tests, storage/security fixes and complete setup instructions. |
+| feature/flow-verification | 7748393 + verification/documentation follow-ups | [#13](https://github.com/Abhinash2018/adora/pull/13) | [Verification](docs/verification.md); connected-screen tests, storage/security fixes and complete setup instructions. |
 
 Earlier history: mobile-foundation PR #1 was already merged; auth-business-profile PR #2 and no-website-onboarding PR #3 are prior dependencies. No PR was merged during this completion work. The latest stacked branch contains the full application; main remains unchanged.
 
@@ -25,7 +25,7 @@ Earlier history: mobile-foundation PR #1 was already merged; auth-business-profi
 
 - 42 mobile/domain/component tests and 8 server tests passed locally; lint and mobile/server typecheck passed.
 - Android, iOS and web JavaScript bundles exported successfully. No native compilation or device/emulator testing occurred; no interactive browser visual verification was available.
-- GitHub CI succeeded for campaign-submission (#11, run 35570543831) and results-dashboard (#12, run 35570869695). PR #13 also runs all-platform JS exports; see its checks for the latest server-side result.
+- GitHub CI succeeded for campaign-submission (#11, run 35570543831), results-dashboard (#12, run 35570869695), and the final implementation 7748393 (#13, run 35571913614), including all-platform JS exports. Follow-up commit checks are visible on PR #13.
 - Entire no-website demo screen flow is exercised, including camera/gallery boundary mocks, approval and pause/stop. This does not prove device hardware, OAuth or paid provider behavior.
 - npm reports 13 moderate transitive dependency advisories; SDK-compatible remediation still needs review.
 

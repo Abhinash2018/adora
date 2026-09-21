@@ -1,6 +1,7 @@
 import { act, create, ReactTestRenderer } from 'react-test-renderer';
 import { Text, TextInput } from 'react-native';
 import Channels from '../app/channels';
+import Goal from '../app/goal';
 import Connections from '../app/connections';
 import Photos from '../app/photos';
 import Preview from '../app/preview';
@@ -19,7 +20,7 @@ jest.mock('expo-router', () => ({ useRouter: () => mockRouter, useFocusEffect: (
 jest.mock('react-native-safe-area-context', () => ({ SafeAreaView: jest.requireActual('react-native').View }));
 jest.mock('./auth/AuthProvider', () => ({ useAuth: () => ({ demo: true }) }));
 jest.mock('./state/WorkspaceProvider', () => ({ useWorkspace: () => { const React = jest.requireActual('react'); const data = React.useSyncExternalStore((listener: () => void) => { mockListeners.add(listener); return () => mockListeners.delete(listener); }, () => mockWorkspace); return { data, loading: false, error: '', update: mockUpdate, retry: jest.fn() }; } }));
-jest.mock('./services/businessProfileStore', () => ({ loadBusinessProfile: async () => ({ name: 'Palms', location: 'Austin', description: 'Rooms near downtown.', destination: '', noWebsite: true, goal: 'calls' }) }));
+jest.mock('./services/businessProfileStore', () => ({ loadBusinessProfile: async () => ({ name: 'Palms', location: 'Austin', description: 'Rooms near downtown.', destination: '', noWebsite: true, goal: 'calls' }), saveBusinessProfile: jest.fn(async () => {}) }));
 jest.mock('./services/api', () => ({ api: jest.fn() }));
 jest.mock('./services/photos', () => ({ savePhoto: async () => ({ id: 'photo', uri: 'local', mimeType: 'image/jpeg' }) }));
 jest.mock('./PhotoView', () => ({ PhotoView: () => null }));
@@ -35,6 +36,7 @@ async function check(index = 0) { await act(async () => screen.root.findAll(n =>
 beforeEach(() => { jest.useRealTimers(); jest.clearAllMocks(); mockWorkspace = { draft: null, connections: [], campaigns: [] }; jest.mocked(launchImageLibraryAsync).mockResolvedValue({ canceled: false, assets: [{ uri: 'local', width: 100, height: 100 }] }); });
 afterEach(async () => { await act(async () => screen?.unmount()); });
 it('runs channel selection through photos, preview, approval and pause/stop without a website or provider calls', async () => {
+  await mount(Goal); await press('Find my customers'); expect(mockRouter.push).toHaveBeenLastCalledWith('/channels');
   await mount(Channels); await press('Recommend a platform'); await press('Connect my accounts'); expect(mockRouter.push).toHaveBeenLastCalledWith('/connections');
   await mount(Connections); await press('Select sample account (demo)'); await press('Continue to my photos');
   await mount(Photos); await press('Choose from gallery'); expect(mockWorkspace.draft?.photos).toHaveLength(1); await press('Create my ad');

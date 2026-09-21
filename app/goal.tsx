@@ -57,7 +57,7 @@ export default function Goal() {
       </View>
       {profile.noWebsite && <Text style={s.notice}>{goal === 'bookings' ? 'No website yet? You can plan your ad now. A supported booking or sales destination must be added before submission.' : 'You can plan this goal without a website. A phone number or supported messaging account will be needed before submission.'}</Text>}
       <Pressable accessibilityRole="button" accessibilityState={{ disabled: saving, busy: saving }} disabled={saving} onPress={save} style={s.button}><Text style={s.buttonText}>{saving ? 'Saving…' : 'Find my customers'}</Text></Pressable>
-      {saved && <Text accessibilityLiveRegion="polite" style={s.notice}>Your goal is saved. Account connection and campaign setup are coming next. No ad has been submitted.</Text>}
+      {saved && <Text accessibilityLiveRegion="polite" style={s.notice}>Your goal is saved. Choose your advertising platforms next. No ad has been submitted.</Text>}
     </> : null}
     {!!error && <Text accessibilityRole="alert" style={s.error}>{error}</Text>}
   </ScrollView></SafeAreaView>;
