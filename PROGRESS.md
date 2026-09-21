@@ -13,6 +13,8 @@
 
 ## Completion work
 
+- `feature/campaign-submission` (stacked on PR #10): durable demo submission, explicit revision/account approval, duplicate prevention, owner-protected immutable live review records. Live paid adapters intentionally fail closed and still require implementation/verification; see `docs/campaign-submission.md`.
+
 - `feature/budget-and-approval` (stacked on PR #9): cent-safe allocations, phone/messaging destinations without a website, exact draft review and revision-bound consent. Acceptance: `docs/budget-and-approval.md`.
 
 - `feature/ai-ad-creation` (stacked on PR #8): platform previews, fact-only structured server AI, manual copy editing, consent, plain-language revision and confirmation. Demo is local and clearly labeled. Acceptance: `docs/ai-ad-creation.md`.
