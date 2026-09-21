@@ -3,7 +3,7 @@ import { BusinessProfile } from './businessProfile';
 export type Channel = 'google' | 'facebook' | 'instagram';
 export type Provider = 'google' | 'meta';
 export type CampaignStatus = 'draft' | 'awaiting_approval' | 'submitted' | 'under_review' | 'active' | 'paused' | 'rejected' | 'completed' | 'failed';
-export type Connection = { provider: Provider; status: 'disconnected' | 'connected' | 'expired' | 'missing_permission'; accountId?: string; accountName?: string; assetId?: string; assetName?: string; demo: boolean };
+export type Connection = { provider: Provider; status: 'disconnected' | 'connected' | 'expired' | 'missing_permission'; accountId?: string; accountName?: string; assetId?: string; assetName?: string; instagramId?: string; demo: boolean };
 export type Photo = { id: string; uri: string; path?: string; mimeType: string };
 export type AdCopy = { channel: Channel; headline: string; body: string; callToAction: string };
 export type Draft = {
